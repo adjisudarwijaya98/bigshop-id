@@ -1,0 +1,4 @@
+deployment:
+tasks:
+  - export DEPLOYPATH=/home/bigz4613/bigshop-id/
+  - /bin/cp -R * $DEPLOYPATH
