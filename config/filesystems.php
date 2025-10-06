@@ -8,8 +8,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Here you may specify the default filesystem disk that should be used
-    | by the framework. The "local" disk, as well as a variety of cloud
-    | based disks are available to your application for file storage.
+    | by the framework. The "local" disk is used as a default when
+    | the application is set to be local.
     |
     */
 
@@ -20,11 +20,9 @@ return [
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
-    | Below you may configure as many filesystem disks as necessary, and you
-    | may even configure multiple disks for the same driver. Examples for
-    | most supported storage drivers are configured here for reference.
-    |
-    | Supported drivers: "local", "ftp", "sftp", "s3"
+    | Here you may configure as many filesystem "disks" as you wish, and you
+    | may even configure multiple disks of the same driver. Defaults have
+    | been setup for most of the drivers.
     |
     */
 
@@ -32,19 +30,26 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/private'),
-            'serve' => true,
+            'root' => storage_path('app'),
             'throw' => false,
-            'report' => false,
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
-            'report' => false,
+        ],
+
+        // Konfigurasi Baru untuk Disk 'uploads'
+        'uploads' => [
+            'driver' => 'local',
+            // Kita arahkan root ke folder 'public/uploads'
+            'root' => public_path('uploads'),
+            'url' => env('APP_URL') . '/uploads',
+            'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -57,19 +62,19 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
-            'report' => false,
         ],
 
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Symbolic Links
+    | Symlinks
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the symbolic links that will be created when the
-    | `storage:link` Artisan command is executed. The array keys should be
-    | the locations of the links and the values should be their targets.
+    | This array is for configuring the symbolic links that will be created
+    | when the `storage:link` Artisan command is executed. The array keys
+    | should be the locations of the links and the values should be their
+    | targets.
     |
     */
 

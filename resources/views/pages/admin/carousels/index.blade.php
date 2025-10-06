@@ -53,8 +53,8 @@
                             {{ $carousel->id }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {{-- Tampilkan pratinjau gambar --}}
-                            <img src="{{ asset('storage/' . $carousel->image_url) }}" alt="Banner"
+                            {{-- Perbaikan: Mengganti 'storage/' dengan 'uploads/' karena file disimpan di public/uploads --}}
+                            <img src="{{ asset('uploads/' . $carousel->image_url) }}" alt="Banner"
                                 class="w-28 h-14 object-cover rounded-md shadow-md border border-gray-200">
                         </td>
 

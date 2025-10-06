@@ -10,9 +10,10 @@
             <p>{{ session('success') }}</p>
         </div>
     @endif
+
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-gray-800">Manajemen Produk</h1>
-        {{-- Tombol untuk menambah produk baru (akan kita fungsikan nanti) --}}
+        {{-- Tombol untuk menambah produk baru --}}
         <a href="{{ route('umkm.products.create') }}"
             class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 transition duration-300">
             + Tambah Produk Baru
@@ -32,12 +33,27 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                @foreach ($products as $product)
+                @forelse ($products as $product)
                     <tr>
+                        {{-- BLOK GAMBAR YANG TELAH DIPERBAIKI DENGAN FALLBACK --}}
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <img src="{{ asset('storage/' . $product->image_url) }}" alt="{{ $product->name }}"
-                                class="h-10 w-10 rounded object-cover">
+                            @if ($product->image_url)
+                                <img src="{{ asset('storage/' . $product->image_url) }}" alt="{{ $product->name }}"
+                                    class="h-10 w-10 rounded object-cover shadow-sm">
+                            @else
+                                {{-- Placeholder jika gambar tidak tersedia --}}
+                                <div
+                                    class="h-10 w-10 flex items-center justify-center bg-gray-200 text-gray-500 rounded shadow-sm text-xs font-semibold">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L15 15m0 0l4.586-4.586a2 2 0 012.828 0L24 14m-4-10H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            @endif
                         </td>
+                        {{-- AKHIR BLOK GAMBAR --}}
                         <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $product->name }}</td>
                         <td class="px-6 py-4 text-sm text-gray-500">Rp {{ number_format($product->price, 0, ',', '.') }}
                         </td>
@@ -63,13 +79,14 @@
 
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-gray-500">
+                            Anda belum memiliki produk yang terdaftar.
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
 
-        {{-- Tampil jika tidak ada produk --}}
-        @if ($products->isEmpty())
-            <p class="p-6 text-center text-gray-500">Anda belum memiliki produk yang terdaftar.</p>
-        @endif
-    </div>
-@endsection
+    @endsection

@@ -34,7 +34,6 @@ class CarouselController extends Controller
     {
         // 1. Validasi Input
         $validated = $request->validate([
-            // 'title' sekarang wajib diisi (required) karena kolom database NOT NULL
             'title' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             // Gunakan 'image' sebagai kunci, dan 'mimes' untuk semua format gambar umum
@@ -46,14 +45,14 @@ class CarouselController extends Controller
         // 2. Proses Upload Gambar
         $imagePath = null;
         if ($request->hasFile('image')) {
-            // Simpan file di folder 'public/carousels'
-            $imagePath = $request->file('image')->store('carousels', 'public');
+            // PERBAIKAN: Mengganti 'public' disk menjadi 'uploads' disk.
+            // File sekarang akan disimpan di public/uploads/carousels
+            $imagePath = $request->file('image')->store('carousels', 'uploads');
             // Tambahkan path ke data yang divalidasi, sesuai dengan kolom 'image_url'
             $validated['image_url'] = $imagePath;
         }
 
         // 3. Simpan Data ke Database
-        // Pastikan kolom database diisi dengan nilai dari $validated
         Carousel::create([
             'title' => $validated['title'],
             'subtitle' => $validated['subtitle'] ?? null,
@@ -90,20 +89,26 @@ class CarouselController extends Controller
 
         // Proses Update Gambar (Jika ada file baru diupload)
         if ($request->hasFile('image')) {
-            // Hapus gambar lama dari storage jika ada
+            // Hapus gambar lama dari storage terlebih dahulu
+            // PERBAIKAN: Menggunakan 'uploads' disk saat menghapus
             if ($carousel->image_url) {
-                Storage::disk('public')->delete($carousel->image_url);
+                // Periksa apakah path benar-benar ada sebelum menghapus
+                Storage::disk('uploads')->delete($carousel->image_url);
             }
 
             // Simpan gambar baru
-            $imagePath = $request->file('image')->store('carousels', 'public');
+            // PERBAIKAN: Mengganti 'public' disk menjadi 'uploads' disk.
+            $imagePath = $request->file('image')->store('carousels', 'uploads');
             $validated['image_url'] = $imagePath;
 
             // Hapus kunci 'image' dari $validated agar tidak disimpan ke kolom database yang salah
             unset($validated['image']);
         } else {
             // Jika tidak ada gambar baru, pastikan kolom 'image_url' tetap menggunakan path lama
+            // Ini tidak wajib jika Anda menggunakan fillable/guarded, tetapi aman untuk dilakukan
             $validated['image_url'] = $carousel->image_url;
+            // Hapus kunci 'image' dari $validated
+            unset($validated['image']);
         }
 
         // Update data di database
@@ -119,8 +124,9 @@ class CarouselController extends Controller
     public function destroy(Carousel $carousel)
     {
         // Hapus gambar dari storage terlebih dahulu
+        // PERBAIKAN: Menggunakan 'uploads' disk saat menghapus
         if ($carousel->image_url) {
-            Storage::disk('public')->delete($carousel->image_url);
+            Storage::disk('uploads')->delete($carousel->image_url);
         }
 
         // Hapus record dari database

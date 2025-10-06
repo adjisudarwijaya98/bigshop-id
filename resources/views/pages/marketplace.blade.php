@@ -69,15 +69,31 @@
                         @foreach ($products as $product)
                             <div
                                 class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                                <img class="w-full h-48 object-cover" src="{{ asset('storage/' . $product->image_url) }}"
+                                {{-- PERBAIKAN PATH IMAGE: Asumsikan image_url sudah disesuaikan, 
+                                atau hapus prefix 'storage/' jika ada duplikasi. 
+                                Menggunakan asset() langsung pada path yang tersimpan di DB. --}}
+                                @php
+                                    $imagePath = $product->image_url;
+                                    if (str_contains($imagePath, 'storage/') && strpos($imagePath, 'storage/') !== 0) {
+                                        // Jika storage/ ada, tapi tidak di awal (misal: 'products/storage/...')
+                                    } elseif (str_starts_with($imagePath, 'storage/')) {
+                                        // Jika path sudah dimulai dengan 'storage/', pakai langsung
+                                        $finalPath = $imagePath;
+                                    } else {
+                                        // Standar: tambahkan 'storage/' untuk file yang diupload ke storage disk
+                                        $finalPath = 'storage/' . $imagePath;
+                                    }
+                                @endphp
+                                <img class="w-full h-48 object-cover" src="{{ asset($finalPath) }}"
                                     alt="{{ $product->name }}">
                                 <div class="p-4">
                                     <h3 class="text-lg font-semibold mb-1 truncate">{{ $product->name }}</h3>
                                     <p class="text-gray-600 mb-2 font-bold text-lg">Rp
                                         {{ number_format($product->price, 0, ',', '.') }}</p>
 
-                                    {{-- Mengambil nama UMKM dari relasi (sementara hardcode) --}}
-                                    <p class="text-sm text-gray-500 mb-2">Toko: Toko Laris Manis</p>
+                                    {{-- PERBAIKAN NAMA TOKO: Mengambil nama UMKM dari relasi --}}
+                                    <p class="text-sm text-gray-500 mb-2">Toko:
+                                        {{ $product->umkm->name ?? 'UMKM Tidak Ditemukan' }}</p>
 
                                     <a href="/product/{{ $product->slug }}"
                                         class="mt-4 block w-full bg-red-600 text-white text-center font-semibold py-2 rounded-full hover:bg-red-700 transition duration-300">

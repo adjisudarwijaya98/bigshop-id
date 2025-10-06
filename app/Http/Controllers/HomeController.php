@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carousel;
-use App\Models\Product; // Tambahkan model Produk
+use App\Models\Product; // Pastikan Product model di-import
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,12 +13,13 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // 1. Ambil semua data Carousel
         $carousels = Carousel::all();
 
-        // Ambil 4 produk terbaru atau terlaris untuk ditampilkan di homepage
+        // 2. Ambil 4 produk terbaru (orderBy('id', 'desc')) untuk ditampilkan
         $featuredProducts = Product::orderBy('id', 'desc')->limit(4)->get();
 
-        // Kirim kedua data ke view
+        // 3. Kirim kedua data ke view 'pages.home'
         return view('pages.home', compact('carousels', 'featuredProducts'));
     }
 }

@@ -6,6 +6,7 @@
 
     {{-- BAGIAN 1: CAROUSEL --}}
     <section class="relative w-full overflow-hidden">
+        {{-- Menggunakan x-data untuk Alpine.js --}}
         <div x-data="{
             currentSlide: 0,
             totalSlides: {{ count($carousels) }},
@@ -22,18 +23,26 @@
                 :style="`transform: translateX(-${currentSlide * 100}%)`">
 
                 @foreach ($carousels as $index => $carousel)
-                    {{-- Menggunakan tinggi sesuai permintaan Anda --}}
                     <div class="w-full flex-shrink-0 relative h-[300px] md:h-[650px] lg:h-[420px]">
 
-                        {{-- Gambar Banner --}}
-                        <img src="{{ asset('storage/' . $carousel->image_url) }}" alt="{{ $carousel->title }}"
+                        {{-- PERBAIKAN PATH IMAGE CAROUSEL --}}
+                        @php
+                            $imagePath = $carousel->image_url;
+                            $cleanPath = ltrim($imagePath, '/');
+
+                            if (!str_starts_with($cleanPath, 'uploads/')) {
+                                $finalPath = 'uploads/' . $cleanPath;
+                            } else {
+                                $finalPath = $cleanPath;
+                            }
+                        @endphp
+
+                        <img src="{{ asset($finalPath) }}" alt="{{ $carousel->title }}"
                             class="absolute inset-0 w-full h-full object-cover">
 
-                        {{-- OVERLAY untuk teks (Gradient di bawah agar teks tidak menutupi bagian tengah gambar) --}}
-                        {{-- Perubahan di sini: items-end dan justify-start --}}
+                        {{-- OVERLAY untuk teks --}}
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end justify-start p-8 md:p-16">
-                            {{-- Perubahan di sini: text-left --}}
                             <div class="max-w-3xl text-white text-left">
                                 {{-- Judul dan Subjudul --}}
                                 <h2
@@ -55,7 +64,7 @@
                 @endforeach
             </div>
 
-            {{-- KONTROL: Dot Navigasi di bawah --}}
+            {{-- KONTROL: Dot Navigasi di bawah (Sudah menggunakan @click Alpine.js) --}}
             <div class="absolute inset-x-0 bottom-4 flex justify-center space-x-2">
                 @foreach ($carousels as $index => $carousel)
                     <button @click="currentSlide = {{ $index }}"
@@ -68,7 +77,7 @@
                 @endforeach
             </div>
 
-            {{-- KONTROL: Tombol Previous/Next --}}
+            {{-- KONTROL: Tombol Previous/Next (Sudah menggunakan @click Alpine.js) --}}
             <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides"
                 class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/30 p-3 rounded-full text-white hover:bg-white/50 transition duration-300 focus:outline-none hidden md:block">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -88,6 +97,7 @@
     </section>
 
     {{-- BAGIAN 2: PRODUK UNGGULAN UMKM --}}
+
     <section class="py-16">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12">
@@ -98,8 +108,21 @@
                 @foreach ($featuredProducts as $product)
                     <div
                         class="bg-white rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                        <img class="w-full h-48 object-cover" src="{{ asset('storage/' . $product->image_url) }}"
-                            alt="{{ $product->name }}">
+
+                        {{-- PERBAIKAN PATH IMAGE PRODUK UNGGULAN (TANPA STORAGE LINK) --}}
+                        @php
+                            // 1. Ambil nama file saja dari URL yang tersimpan di database.
+                            // Contoh: Jika image_url berisi 'uploads/fileku.jpg', basename akan menghasilkan 'fileku.jpg'.
+                            // Ini menghindari masalah jika ada prefix 'storage/' atau path lain yang ikut tersimpan.
+                            $filename = basename($product->image_url);
+
+                            // 2. Gabungkan dengan 'uploads/' secara eksplisit.
+                            // Karena file sudah dipindahkan ke folder public/uploads,
+                            // fungsi asset() akan menghasilkan URL yang benar: http://.../uploads/fileku.jpg
+                            $finalPath = 'uploads/' . $filename;
+                        @endphp
+
+                        <img class="w-full h-48 object-cover" src="{{ asset($finalPath) }}" alt="{{ $product->name }}">
                         <div class="p-4">
                             <h3 class="text-lg font-semibold mb-1 truncate">{{ $product->name }}</h3>
                             <p class="text-gray-600 mb-4 font-bold text-xl">
@@ -122,9 +145,11 @@
             </div>
 
         </div>
+
     </section>
 
-    {{-- BAGIAN 3: LOGO PARTNER/MITRA (Desain terbaru) --}}
+
+    {{-- BAGIAN 3: LOGO PARTNER/MITRA --}}
     <section class="py-16 bg-gray-50">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-12 leading-tight">
@@ -171,82 +196,5 @@
             </p>
         </div>
     </section>
-
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const carousel = document.getElementById('carousel-bigshop');
-            const slides = carousel.querySelectorAll('.carousel-item');
-            const dots = carousel.querySelectorAll('.dot');
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-
-            let currentIndex = 0;
-            let slideInterval;
-
-            function showSlide(index) {
-                slides.forEach((slide, i) => {
-                    slide.classList.add('hidden');
-                    if (i === index) {
-                        slide.classList.remove('hidden');
-                        slide.classList.add('active');
-                    } else {
-                        slide.classList.remove('active');
-                    }
-                });
-                updateDots(index);
-            }
-
-            function updateDots(index) {
-                dots.forEach((dot, i) => {
-                    if (i === index) {
-                        dot.classList.add('active-dot', 'opacity-100');
-                        dot.classList.remove('opacity-50');
-                    } else {
-                        dot.classList.remove('active-dot', 'opacity-100');
-                        dot.classList.add('opacity-50');
-                    }
-                });
-            }
-
-            function nextSlide() {
-                currentIndex = (currentIndex + 1) % slides.length;
-                showSlide(currentIndex);
-            }
-
-            function prevSlide() {
-                currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-                showSlide(currentIndex);
-            }
-
-            // Event listeners untuk tombol navigasi
-            nextBtn.addEventListener('click', nextSlide);
-            prevBtn.addEventListener('click', prevSlide);
-
-            // Event listeners untuk dots
-            dots.forEach((dot, index) => {
-                dot.addEventListener('click', () => {
-                    showSlide(index);
-                    currentIndex = index;
-                    resetInterval();
-                });
-            });
-
-            // Autoplay carousel
-            function startInterval() {
-                slideInterval = setInterval(nextSlide, 5000); // Ganti slide setiap 5 detik
-            }
-
-            function resetInterval() {
-                clearInterval(slideInterval);
-                startInterval();
-            }
-
-            // Tampilkan slide pertama saat dimuat
-            showSlide(currentIndex);
-            startInterval();
-        });
-    </script>
 
 @endsection

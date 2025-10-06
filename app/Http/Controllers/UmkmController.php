@@ -46,7 +46,8 @@ class UmkmController extends Controller
         $data = $request->validated();
 
         // 2. Proses Upload Gambar
-        $path = $request->file('image')->store('products', 'public');
+        // FIX: Ubah folder penyimpanan menjadi 'uploads/products'
+        $path = $request->file('image')->store('uploads/products', 'public');
 
         // 3. Buat Slug
         $slug = Str::slug($data['name']);
@@ -60,7 +61,7 @@ class UmkmController extends Controller
             'description' => $data['description'],
             'price' => $data['price'],
             'stock' => $data['stock'],
-            'image_url' => $path, // Simpan path gambar di database
+            'image_url' => $path, // Simpan path gambar (mis: uploads/products/xyz.jpg)
         ];
 
         // 5. Simpan Produk
@@ -98,11 +99,12 @@ class UmkmController extends Controller
         // 1. Cek dan Proses Upload Gambar Baru
         if ($request->hasFile('image')) {
             // Hapus gambar lama (penting untuk menjaga storage)
-            if (Storage::disk('public')->exists($product->image_url)) {
+            if ($product->image_url && Storage::disk('public')->exists($product->image_url)) {
                 Storage::disk('public')->delete($product->image_url);
             }
             // Simpan gambar baru
-            $path = $request->file('image')->store('products', 'public');
+            // FIX: Ubah folder penyimpanan menjadi 'uploads/products'
+            $path = $request->file('image')->store('uploads/products', 'public');
         }
 
         // 2. Buat Slug Baru dari Nama Produk (jika nama berubah)
@@ -134,7 +136,8 @@ class UmkmController extends Controller
         }
 
         // 2. Hapus File Gambar dari Storage
-        if (Storage::disk('public')->exists($product->image_url)) {
+        // Path penghapusan sudah benar, karena image_url menyimpan path relatif disk (sekarang 'uploads/products/...')
+        if ($product->image_url && Storage::disk('public')->exists($product->image_url)) {
             Storage::disk('public')->delete($product->image_url);
         }
 
@@ -194,14 +197,11 @@ class UmkmController extends Controller
         }
 
         $request->validate([
-            'status' => ['required', 'in:processing,shipped,delivered,cancelled'],
+            'status' => ['required', 'in:pending,processing,shipped,delivered,cancelled'],
         ]);
 
-        // Catatan: Status order induk ('orders') tetap dipegang oleh sistem
-        // Kita hanya update status item ini untuk penjual
-
-        // Simpan status baru
-        $orderItem->order->update(['status' => $request->status]);
+        // FIX LOGIC: Perbarui status pada OrderItem
+        $orderItem->update(['status' => $request->status]);
 
         return redirect()->route('umkm.orders.show', $orderItem)
             ->with('success', 'Status pesanan berhasil diperbarui menjadi: ' . strtoupper($request->status));
