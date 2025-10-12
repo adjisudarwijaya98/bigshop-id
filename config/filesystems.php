@@ -37,9 +37,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL') . '/storage',
+            'url' => env('APP_URL') . '/storage', // PASTIKAN INI BENAR
             'visibility' => 'public',
-            'throw' => false,
         ],
 
         // Konfigurasi Baru untuk Disk 'uploads'
