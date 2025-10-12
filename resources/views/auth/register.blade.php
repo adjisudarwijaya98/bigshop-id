@@ -11,8 +11,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS (Asumsi sudah terinstall atau menggunakan CDN/Mix) -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('build/assets/app-DLIeHCZM.css') }}">
+    <script src="{{ asset('build/assets/app.<HASH_JS>.js') }}"></script>
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
