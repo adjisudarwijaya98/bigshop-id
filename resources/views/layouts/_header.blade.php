@@ -2,7 +2,7 @@
     <div class="container mx-auto px-6 py-4 flex items-center justify-between">
         {{-- LOGO (Kiri) --}}
         <a href="/" class="flex items-center space-x-2">
-            <span class="text-2xl md:text-3xl font-extrabold text-red-600">Bigshop.Id</span>
+            <span class="text-2xl md:text-3xl font-extrabold text-red-600">Baru.Id</span>
         </a>
 
         {{-- NAVIGASI UTAMA (Hanya Desktop) --}}
