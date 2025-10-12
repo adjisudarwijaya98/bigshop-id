@@ -45,21 +45,18 @@ class CarouselController extends Controller
         // 2. Proses Upload Gambar
         $imagePath = null;
         if ($request->hasFile('image')) {
-            // PERBAIKAN: Mengganti 'public' disk menjadi 'uploads' disk.
-            // File sekarang akan disimpan di public/uploads/carousels
-            $imagePath = $request->file('image')->store('carousels', 'uploads');
-            // Tambahkan path ke data yang divalidasi, sesuai dengan kolom 'image_url'
+            // PERUBAHAN: Menggunakan disk 'public'.
+            // File akan disimpan di storage/app/public/carousels
+            $imagePath = $request->file('image')->store('carousels', 'public');
+            // Path yang tersimpan di DB adalah 'carousels/namafile.jpg'
             $validated['image_url'] = $imagePath;
+
+            // Hapus kunci 'image' karena kita hanya menyimpan 'image_url' di database
+            unset($validated['image']);
         }
 
         // 3. Simpan Data ke Database
-        Carousel::create([
-            'title' => $validated['title'],
-            'subtitle' => $validated['subtitle'] ?? null,
-            'image_url' => $validated['image_url'], // Menggunakan path hasil upload
-            'button_text' => $validated['button_text'] ?? null,
-            'button_link' => $validated['button_link'] ?? null,
-        ]);
+        Carousel::create($validated);
 
         return redirect()->route('admin.carousels.index')
             ->with('success', 'Banner carousel baru berhasil ditambahkan dan diunggah!');
@@ -90,26 +87,19 @@ class CarouselController extends Controller
         // Proses Update Gambar (Jika ada file baru diupload)
         if ($request->hasFile('image')) {
             // Hapus gambar lama dari storage terlebih dahulu
-            // PERBAIKAN: Menggunakan 'uploads' disk saat menghapus
-            if ($carousel->image_url) {
-                // Periksa apakah path benar-benar ada sebelum menghapus
-                Storage::disk('uploads')->delete($carousel->image_url);
+            // PERUBAHAN: Menggunakan disk 'public' saat menghapus
+            if ($carousel->image_url && Storage::disk('public')->exists($carousel->image_url)) {
+                Storage::disk('public')->delete($carousel->image_url);
             }
 
             // Simpan gambar baru
-            // PERBAIKAN: Mengganti 'public' disk menjadi 'uploads' disk.
-            $imagePath = $request->file('image')->store('carousels', 'uploads');
+            // PERUBAHAN: Menggunakan disk 'public'
+            $imagePath = $request->file('image')->store('carousels', 'public');
             $validated['image_url'] = $imagePath;
-
-            // Hapus kunci 'image' dari $validated agar tidak disimpan ke kolom database yang salah
-            unset($validated['image']);
-        } else {
-            // Jika tidak ada gambar baru, pastikan kolom 'image_url' tetap menggunakan path lama
-            // Ini tidak wajib jika Anda menggunakan fillable/guarded, tetapi aman untuk dilakukan
-            $validated['image_url'] = $carousel->image_url;
-            // Hapus kunci 'image' dari $validated
-            unset($validated['image']);
         }
+
+        // Hapus kunci 'image' dari $validated karena tidak ada di kolom database
+        unset($validated['image']);
 
         // Update data di database
         $carousel->update($validated);
@@ -124,9 +114,12 @@ class CarouselController extends Controller
     public function destroy(Carousel $carousel)
     {
         // Hapus gambar dari storage terlebih dahulu
-        // PERBAIKAN: Menggunakan 'uploads' disk saat menghapus
+        // PERUBAHAN: Menggunakan disk 'public' saat menghapus
         if ($carousel->image_url) {
-            Storage::disk('uploads')->delete($carousel->image_url);
+            // Pastikan file benar-benar ada di disk public sebelum mencoba menghapus
+            if (Storage::disk('public')->exists($carousel->image_url)) {
+                Storage::disk('public')->delete($carousel->image_url);
+            }
         }
 
         // Hapus record dari database
