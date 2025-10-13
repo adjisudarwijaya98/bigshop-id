@@ -27,10 +27,19 @@
                     :style="`transform: translateX(-${currentSlide * 100}%)`">
 
                     @foreach ($carousels as $index => $carousel)
+                        {{-- Logic Path Gambar untuk Carousel Diperbaiki --}}
+                        @php
+                            // Mengambil path yang benar dari kolom image_url.
+                            // Asumsi: Gambar carousel diunggah ke storage/app/public.
+                            $carouselImagePath = str_starts_with($carousel->image_url, 'storage/')
+                                ? $carousel->image_url
+                                : 'storage/' . $carousel->image_url;
+                        @endphp
+
                         <div class="w-full flex-shrink-0 relative h-72 md:h-96 xl:h-[420px]">
 
-                            {{-- Image Path: Assuming image_url contains the path relative to the public/uploads folder --}}
-                            <img src="{{ asset('uploads/' . $carousel->image_url) }}" alt="{{ $carousel->title }}"
+                            {{-- Path Gambar Menggunakan asset() dengan awalan 'storage/' --}}
+                            <img src="{{ asset($carouselImagePath) }}" alt="{{ $carousel->title }}"
                                 class="absolute inset-0 w-full h-full object-cover" loading="lazy">
 
                             {{-- OVERLAY for Text and Button --}}
@@ -101,10 +110,11 @@
                     <div
                         class="bg-white rounded-xl border border-gray-200 overflow-hidden transform hover:shadow-xl hover:border-red-300 transition-all duration-300">
 
-                        {{-- LOGIKA PATH GAMBAR DIVERSIFIKASI DAN DIRAPIKAN --}}
+                        {{-- LOGIKA PATH GAMBAR DIVERSIFIKASI DAN DIRAPIKAN (DIPERBAIKI) --}}
                         @php
-                            // Jika image_url sudah dimulai dengan 'storage/', gunakan apa adanya.
-                            // Jika belum, tambahkan 'storage/' (asumsi path default Laravel storage symlink).
+                            // Cek apakah image_url sudah diawali 'storage/'.
+                            // Jika belum, tambahkan 'storage/'. Ini adalah cara yang benar untuk mengakses
+                            // gambar yang disimpan di 'storage/app/public' setelah menjalankan 'php artisan storage:link'.
                             $finalPath = str_starts_with($product->image_url, 'storage/')
                                 ? $product->image_url
                                 : 'storage/' . $product->image_url;
