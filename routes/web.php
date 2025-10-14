@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ElearningController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\UmkmProfileController;
 use App\Http\Controllers\Admin\CarouselController;
 
 
@@ -37,6 +38,9 @@ Route::prefix('umkm')->middleware(['auth', 'is_umkm'])->group(function () {
     // Rute manajemen produk akan kita tambahkan di sini
     // Rute untuk menampilkan form Tambah Produk
     Route::get('/products/create', [UmkmController::class, 'create'])->name('umkm.products.create');
+    Route::get('/edit', [UmkmProfileController::class, 'edit'])
+        ->name('umkm.profile.edit');
+    Route::put('/profile/umkm', [UmkmProfileController::class, 'update'])->name('umkm.profile.update');
 
     // Rute untuk memproses data dari form (Akan kita gunakan di langkah selanjutnya)
     Route::post('/products', [UmkmController::class, 'store'])->name('umkm.products.store');
