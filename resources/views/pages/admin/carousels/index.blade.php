@@ -48,13 +48,21 @@
                 @endif
 
                 @foreach ($carousels as $carousel)
+                    {{-- LOGIC PATH GAMBAR DITAMBAHKAN UNTUK KONSISTENSI --}}
+                    @php
+                        // Memastikan path gambar diawali 'storage/' untuk diakses melalui symlink.
+                        $carouselImagePath = str_starts_with($carousel->image_url, 'storage/')
+                            ? $carousel->image_url
+                            : 'storage/' . $carousel->image_url;
+                    @endphp
+
                     <tr class="hover:bg-red-50 transition duration-100">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-center text-gray-900">
                             {{ $carousel->id }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {{-- Perbaikan: Mengganti 'storage/' dengan 'uploads/' karena file disimpan di public/uploads --}}
-                            <img src="{{ asset('uploads/' . $carousel->image_url) }}" alt="Banner"
+                            {{-- Menggunakan asset() dengan logika path yang sudah diperbaiki --}}
+                            <img src="{{ asset($carouselImagePath) }}" alt="Banner"
                                 class="w-28 h-14 object-cover rounded-md shadow-md border border-gray-200">
                         </td>
 
@@ -76,7 +84,6 @@
                         {{-- Kolom Status Aktif --}}
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             @if ($carousel->is_active ?? false)
-                                {{-- Default ke false jika kolom belum ada --}}
                                 <span
                                     class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                             @else
@@ -90,6 +97,7 @@
                             <a href="{{ route('admin.carousels.edit', $carousel) }}"
                                 class="text-indigo-600 hover:text-indigo-900 mr-2 p-1 rounded hover:bg-indigo-50 transition">Edit</a>
 
+                            {{-- Perhatian: Gunakan modal custom sebagai pengganti confirm() untuk pengalaman pengguna yang lebih baik di lingkungan modern. --}}
                             <form action="{{ route('admin.carousels.destroy', $carousel) }}" method="POST"
                                 class="inline ml-2"
                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus banner ini secara permanen?');">
@@ -115,4 +123,5 @@
             </div>
         @endif
     </div>
+
 @endsection

@@ -69,21 +69,19 @@
                         @foreach ($products as $product)
                             <div
                                 class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                                {{-- PERBAIKAN PATH IMAGE: Asumsikan image_url sudah disesuaikan, 
-                                atau hapus prefix 'storage/' jika ada duplikasi. 
-                                Menggunakan asset() langsung pada path yang tersimpan di DB. --}}
+
+                                {{-- LOGIC PATH GAMBAR YANG DIPERBAIKI --}}
                                 @php
-                                    $imagePath = $product->image_url;
-                                    if (str_contains($imagePath, 'storage/') && strpos($imagePath, 'storage/') !== 0) {
-                                        // Jika storage/ ada, tapi tidak di awal (misal: 'products/storage/...')
-                                    } elseif (str_starts_with($imagePath, 'storage/')) {
-                                        // Jika path sudah dimulai dengan 'storage/', pakai langsung
-                                        $finalPath = $imagePath;
-                                    } else {
-                                        // Standar: tambahkan 'storage/' untuk file yang diupload ke storage disk
-                                        $finalPath = 'storage/' . $imagePath;
-                                    }
+                                    // 1. Ambil path, gunakan placeholder jika null.
+                                    $rawPath = $product->image_url ?? 'placeholders/product-default.png';
+
+                                    // 2. Pastikan path diawali dengan 'storage/' untuk resolusi melalui symlink,
+                                    // asumsikan path yang tersimpan di DB adalah relatif (e.g., 'products/image.jpg').
+                                    $finalPath = str_starts_with($rawPath, 'storage/')
+                                        ? $rawPath
+                                        : 'storage/' . $rawPath;
                                 @endphp
+
                                 <img class="w-full h-48 object-cover" src="{{ asset($finalPath) }}"
                                     alt="{{ $product->name }}">
                                 <div class="p-4">
