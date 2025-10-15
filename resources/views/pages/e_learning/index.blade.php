@@ -45,8 +45,8 @@
         }
 
         /* Kustomisasi font untuk judul hero /
-                        .hero-title {
-                        font-size: 4rem; / 64px, sesuai referensi */
+                                            .hero-title {
+                                            font-size: 4rem; / 64px, sesuai referensi */
         line-height: 1.1;
         }
 
@@ -54,11 +54,11 @@
             .hero-title {
                 font-size: 3rem;
                 /* 48px untuk tablet /
-                        }
-                        }
-                        @media (max-width: 768px) {
-                        .hero-title {
-                        font-size: 2.5rem; / 40px untuk mobile */
+                                            }
+                                            }
+                                            @media (max-width: 768px) {
+                                            .hero-title {
+                                            font-size: 2.5rem; / 40px untuk mobile */
                 line-height: 1.2;
             }
         }
@@ -66,14 +66,7 @@
 
     {{-- Container Utama (pt-4 md:pt-8 untuk jarak dekat dari navbar) --}}
 
-    <div class="container mx-auto px-4 pt-4 pb-16 md:pt-8 md:pb-24">
-
-        {{-- 
-    ====================================================
-    HEADER HERO BARU (Minimalis, Profesional, dan Aset Lengkap)
-    ====================================================
---}}
-        {{-- Menghilangkan padding horizontal (px-0) agar elemen dekoratif bisa keluar dari batas container jika perlu --}}
+    <div class="container mx-auto px-4 pt-2 pb-12 md:pt-3 md:pb-24">
         <div
             class="bg-white rounded-[32px] p-6 md:p-12 lg:p-20 mb-12 md:mb-20 overflow-hidden relative shadow-2xl shadow-gray-100/50">
 

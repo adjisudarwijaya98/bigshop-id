@@ -121,6 +121,8 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     // Route BARU: Mengubah Role Pengguna
     Route::get('/users', [AdminController::class, 'userIndex'])->name('admin.users.index');
     Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdminRole'])->name('admin.users.toggle-admin');
+    Route::delete('/users/{user}', [AdminController::class, 'userDestroy'])->name('admin.users.destroy');
+
     Route::resource('carousels', Admin\CarouselController::class)->except(['show']);
     Route::get('/caroulses', [Admin\CarouselController::class, 'index'])->name('admin.carousels.index');
     Route::get('/create', [Admin\CarouselController::class, 'create'])->name('admin.carousels.create');

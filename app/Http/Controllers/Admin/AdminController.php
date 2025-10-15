@@ -9,6 +9,7 @@ use App\Models\UmkmProfile;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -154,6 +155,38 @@ class AdminController extends Controller
             ->paginate(20);
 
         return view('pages.admin.users.index', compact('users'));
+    }
+
+    public function userDestroy(User $user)
+    {
+        // Mencegah admin menghapus akunnya sendiri
+        if (Auth::id() === $user->id) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        // --- Perbaikan Integritas Kunci Asing (Foreign Key) ---
+        // Penanganan cascading delete dari bawah ke atas: Products -> UMKM Profile -> User
+        if ($user->umkmProfile) {
+
+            // LANGKAH 1: Hapus semua produk yang terkait dengan UMKM Profile ini
+            // Baris ini memastikan produk-produk terhapus sebelum profil UMKM
+            if (method_exists($user->umkmProfile, 'products')) {
+                $user->umkmProfile->products()->delete();
+            }
+
+            // LANGKAH 2: Hapus UMKM Profile (sekarang aman karena produk sudah terhapus)
+            $user->umkmProfile->delete();
+        }
+        // CATATAN: Jika pengguna memiliki relasi lain (mis. pesanan, transaksi, dll.)
+        // relasi tersebut juga harus ditangani di sini.
+        // --- Akhir Perbaikan ---
+
+        // LANGKAH 3: Hapus pengguna
+        $userName = $user->name;
+        $user->delete();
+
+        return redirect()->route('admin.users.index')
+            ->with('success', "Pengguna '{$userName}' berhasil dihapus.");
     }
 
 

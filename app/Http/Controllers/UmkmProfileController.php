@@ -17,7 +17,7 @@ class UmkmProfileController extends Controller
         $user = Auth::user();
         // MENGAMBIL DATA UMKM: Variabel $umkm berisi data dari tabel umkm_profiles
         // melalui relasi 'umkm' yang ada di Model User.
-        $umkm = $user->umkm;
+        $umkm = $user->umkmProfile;
 
         // Jika profil UMKM belum ada, buat data dasarnya
         if (!$umkm) {
