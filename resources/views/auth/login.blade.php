@@ -13,13 +13,20 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800&display=swap" rel="stylesheet" />
 
-    <!-- VITE ASSETS (Bagian ini saja yang dipertahankan untuk memuat CSS/JS) -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- BARIS @vite SUDAH DIHILANGKAN SESUAI PERMINTAAN. -->
 
-    <!-- BARIS YANG DIHILANGKAN:
-<link rel="stylesheet" href="{{ mix('css/app.css') }}">
-<script src="{{ mix('js/app.js') }}"></script>
--->
+    <!-- PENGGANTI UNTUK MEMASTIKAN CLASS TAILWIND BERFUNGSI (HANYA UNTUK KEPERLUAN DEMO/FALLBACK) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Konfigurasi kecil untuk memastikan font Inter yang dimuat dari bunny.net digunakan oleh Tailwind */
+        :root {
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        .font-sans {
+            font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+    </style>
 
 
 </head>
@@ -128,7 +135,7 @@
                         @endif
                     </div>
 
-                    <!-- Tombol Login dan Batal (Baru) -->
+                    <!-- Tombol Login dan Batal -->
                     <div class="flex flex-col items-center justify-center mt-8 space-y-3">
                         <x-primary-button
                             class="w-full justify-center bg-red-600 hover:bg-red-700 transition duration-150 rounded-lg py-2 px-6 font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
@@ -156,6 +163,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Catatan: Biasanya, skrip aplikasi utama akan dimuat di sini, tetapi karena baris @vite dihapus,
+tidak ada JS custom yang dimuat secara otomatis. -->
 
 
 </body>
