@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -8,11 +9,23 @@
 
     <title>Admin Dashboard - @yield('title', config('app.name', 'Laravel'))</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <script src="{{ mix('js/app.js') }}"></script>
+
+    <!-- Mengganti @vite dan mix() dengan CDN untuk menghindari error pada shared hosting -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js diperlukan karena Anda menggunakan x-data untuk dropdown -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* Memastikan font Figtree (atau font default) dimuat */
+        .font-sans {
+            font-family: 'Figtree', sans-serif;
+        }
+    </style>
+
+
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
@@ -24,7 +37,7 @@
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                 <h1 class="text-xl font-bold text-gray-800">Administrator Panel</h1>
 
-                {{-- Dropdown Akun Admin --}}
+                {{-- Dropdown Akun Admin (Menggunakan Alpine.js dari CDN) --}}
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open"
                         class="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-red-600 focus:outline-none">
@@ -56,7 +69,8 @@
                 {{-- Sidebar --}}
                 <aside class="w-full md:w-64">
                     <div class="bg-white rounded-lg shadow p-4">
-                        @include('admin._sidebar') {{-- Menggunakan sidebar yang sudah Anda buat --}}
+                        {{-- Pastikan file resources/views/admin/_sidebar.blade.php juga tidak mengandung @vite atau komponen Blade --}}
+                        @include('admin._sidebar')
                     </div>
                 </aside>
 
@@ -76,6 +90,8 @@
         </div>
 
     </div>
+
+
 </body>
 
 </html>

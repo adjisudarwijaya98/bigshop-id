@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -11,9 +13,16 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800&display=swap" rel="stylesheet" />
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <script src="{{ mix('js/app.js') }}"></script>
+    <!-- MENGGUNAKAN TAILWIND CDN AGAR STYLING BERJALAN. BARIS @vite DAN mix() DIHAPUS. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Memastikan font Inter yang dimuat digunakan oleh Tailwind */
+        .font-sans {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+
+
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
@@ -79,50 +88,59 @@
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
-                    <!-- Name -->
+                    <!-- Name (Diubah ke tag HTML standar) -->
                     <div class="mb-4">
-                        <x-input-label for="name" value="{{ __('Nama Lengkap') }}"
-                            class="font-medium text-gray-700" />
-                        <x-text-input id="name"
-                            class="block mt-1 w-full border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
-                            type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                        <label for="name" class="block font-medium text-sm text-gray-700">Nama Lengkap</label>
+                        <input id="name"
+                            class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
+                            type="text" name="name" value="{{ old('name') }}" required autofocus
+                            autocomplete="name" />
+                        @error('name')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Email Address -->
+                    <!-- Email Address (Diubah ke tag HTML standar) -->
                     <div class="mb-4">
-                        <x-input-label for="email" value="{{ __('Email') }}" class="font-medium text-gray-700" />
-                        <x-text-input id="email"
-                            class="block mt-1 w-full border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
-                            type="email" name="email" :value="old('email')" required autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <label for="email" class="block font-medium text-sm text-gray-700">Email</label>
+                        <input id="email"
+                            class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
+                            type="email" name="email" value="{{ old('email') }}" required
+                            autocomplete="username" />
+                        @error('email')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Password -->
+                    <!-- Password (Diubah ke tag HTML standar) -->
                     <div class="mb-4">
-                        <x-input-label for="password" value="{{ __('Password') }}" class="font-medium text-gray-700" />
-                        <x-text-input id="password"
-                            class="block mt-1 w-full border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
+                        <label for="password" class="block font-medium text-sm text-gray-700">Password</label>
+                        <input id="password"
+                            class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
                             type="password" name="password" required autocomplete="new-password" />
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        @error('password')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Confirm Password -->
+                    <!-- Confirm Password (Diubah ke tag HTML standar) -->
                     <div class="mb-4">
-                        <x-input-label for="password_confirmation" value="{{ __('Konfirmasi Password') }}"
-                            class="font-medium text-gray-700" />
-                        <x-text-input id="password_confirmation"
-                            class="block mt-1 w-full border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
+                        <label for="password_confirmation" class="block font-medium text-sm text-gray-700">Konfirmasi
+                            Password</label>
+                        <input id="password_confirmation"
+                            class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
                             type="password" name="password_confirmation" required autocomplete="new-password" />
-                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                        @error('password_confirmation')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Tombol Register dan Batal -->
+                    <!-- Tombol Register dan Batal (Diubah ke tag HTML standar) -->
                     <div class="flex flex-col items-center justify-center mt-8 space-y-3">
-                        <x-primary-button
-                            class="w-full justify-center bg-red-600 hover:bg-red-700 transition duration-150 rounded-lg py-2 px-6 font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                        <button type="submit"
+                            class="w-full justify-center bg-red-600 text-white hover:bg-red-700 transition duration-150 rounded-lg py-2 px-6 font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                             {{ __('Daftar Sekarang') }}
-                        </x-primary-button>
+                        </button>
 
                         <!-- Tombol Batal/Kembali ke Home -->
                         <a href="{{ url('/') }}"
@@ -143,6 +161,8 @@
             </div>
         </div>
     </div>
+
+
 </body>
 
 </html>
