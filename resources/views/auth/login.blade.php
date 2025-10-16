@@ -13,18 +13,12 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800&display=swap" rel="stylesheet" />
 
-    <!-- BARIS @vite SUDAH DIHILANGKAN SESUAI PERMINTAAN. -->
-
-    <!-- PENGGANTI UNTUK MEMASTIKAN CLASS TAILWIND BERFUNGSI (HANYA UNTUK KEPERLUAN DEMO/FALLBACK) -->
+    <!-- MENGGUNAKAN TAILWIND CDN AGAR STYLING TETAP BERJALAN TANPA VITE/NPM BUILD -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Konfigurasi kecil untuk memastikan font Inter yang dimuat dari bunny.net digunakan oleh Tailwind */
-        :root {
-            --font-inter: 'Inter', sans-serif;
-        }
-
+        /* Memastikan font Inter yang dimuat digunakan oleh Tailwind */
         .font-sans {
-            font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-family: 'Inter', sans-serif;
         }
     </style>
 
@@ -91,31 +85,37 @@
                     <p class="text-sm text-gray-500 mt-1">Kelola UMKM Anda, mulai dari sini.</p>
                 </div>
 
-                <!-- Session Status -->
-                <x-auth-session-status class="mb-4" :status="session('status')" />
+                <!-- Session Status (Menggantikan x-auth-session-status) -->
+                @if (session('status'))
+                    <div class="mb-4 font-medium text-sm text-green-600 bg-green-100 p-3 rounded-lg">
+                        {{ session('status') }}
+                    </div>
+                @endif
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
-                    <!-- Email Address -->
+                    <!-- Email Address (Menggantikan x-input-label dan x-text-input) -->
                     <div class="mb-4">
-                        <x-input-label for="email" value="{{ __('Email') }}" class="font-medium text-gray-700" />
-                        <x-text-input id="email"
-                            class="block mt-1 w-full border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
-                            type="email" name="email" :value="old('email')" required autofocus
+                        <label for="email" class="block font-medium text-sm text-gray-700">Email</label>
+                        <input id="email"
+                            class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
+                            type="email" name="email" value="{{ old('email') }}" required autofocus
                             autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        @error('email')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Password -->
+                    <!-- Password (Menggantikan x-input-label dan x-text-input) -->
                     <div class="mb-4">
-                        <x-input-label for="password" value="{{ __('Password') }}" class="font-medium text-gray-700" />
-
-                        <x-text-input id="password"
-                            class="block mt-1 w-full border-gray-300 rounded-lg focus:border-red-500 focus:ring-red-500"
+                        <label for="password" class="block font-medium text-sm text-gray-700">Password</label>
+                        <input id="password"
+                            class="block mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
                             type="password" name="password" required autocomplete="current-password" />
-
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        @error('password')
+                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Remember Me dan Forgot Password -->
@@ -135,12 +135,12 @@
                         @endif
                     </div>
 
-                    <!-- Tombol Login dan Batal -->
+                    <!-- Tombol Login dan Batal (Menggantikan x-primary-button) -->
                     <div class="flex flex-col items-center justify-center mt-8 space-y-3">
-                        <x-primary-button
-                            class="w-full justify-center bg-red-600 hover:bg-red-700 transition duration-150 rounded-lg py-2 px-6 font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                        <button type="submit"
+                            class="w-full justify-center bg-red-600 text-white hover:bg-red-700 transition duration-150 rounded-lg py-2 px-6 font-semibold shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                             {{ __('Masuk') }}
-                        </x-primary-button>
+                        </button>
 
                         <!-- Tombol Batal/Kembali ke Home -->
                         <a href="{{ url('/') }}"
@@ -163,9 +163,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Catatan: Biasanya, skrip aplikasi utama akan dimuat di sini, tetapi karena baris @vite dihapus,
-tidak ada JS custom yang dimuat secara otomatis. -->
 
 
 </body>
