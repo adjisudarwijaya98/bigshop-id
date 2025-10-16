@@ -9,12 +9,10 @@
 
     <title>{{ config('app.name', 'Bigshop.Id') }} - Daftar</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
+    <!-- HANYA MENGGUNAKAN TAILWIND CDN AGAR STYLING BERJALAN. @vite DAN mix() DIHAPUS. -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800&display=swap" rel="stylesheet" />
 
-    <!-- MENGGUNAKAN TAILWIND CDN AGAR STYLING BERJALAN. BARIS @vite DAN mix() DIHAPUS. -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Memastikan font Inter yang dimuat digunakan oleh Tailwind */
         .font-sans {
@@ -31,7 +29,8 @@
         <!-- Kolom Kiri: Gambar Promosi (Hanya tampil di layar besar) -->
         <div class="hidden lg:block w-1/2 bg-red-600 relative">
 
-            <!-- Background Image Placeholder (Ganti dengan gambar Anda) -->
+            <!-- Background Image Placeholder -->
+            <!-- Gambar Placeholder dipertahankan karena menggunakan link eksternal yang aman -->
             <div class="absolute inset-0 bg-cover bg-center opacity-30"
                 style="background-image: url('https://placehold.co/1200x800/22c55e/ffffff/webp?text=UMKM+Go+Digital');">
             </div>
@@ -72,12 +71,12 @@
         <div class="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
             <div class="w-full max-w-md bg-white p-8 sm:p-10 rounded-xl shadow-2xl border border-gray-100">
 
-                <!-- Logo Aplikasi -->
+                <!-- Logo Aplikasi (Diganti dengan Text Logo untuk stabilitas) -->
                 <div class="flex flex-col items-center mb-8">
                     <a href="/">
-                        <!-- Asumsi logo tersimpan di assets/img/logo.png -->
-                        <img src="{{ asset('assets/img/partners/2.png') }}" alt="Logo Bigshop.Id"
-                            class="h-14 w-auto mb-3">
+                        <!-- Mengganti {{ asset(...) }} yang rentan error dengan logo teks/inline SVG -->
+                        <div class="text-4xl font-extrabold text-red-600 mb-4">Bigshop.<span
+                                class="text-gray-900">Id</span></div>
                     </a>
                     <h2 class="text-3xl font-extrabold text-gray-900 text-center">
                         Daftar Akun Baru
