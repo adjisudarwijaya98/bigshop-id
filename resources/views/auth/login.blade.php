@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -11,9 +12,16 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800&display=swap" rel="stylesheet" />
+
+    <!-- VITE ASSETS (Bagian ini saja yang dipertahankan untuk memuat CSS/JS) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <script src="{{ mix('js/app.js') }}"></script>
+
+    <!-- BARIS YANG DIHILANGKAN:
+<link rel="stylesheet" href="{{ mix('css/app.css') }}">
+<script src="{{ mix('js/app.js') }}"></script>
+-->
+
+
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
@@ -148,6 +156,8 @@
             </div>
         </div>
     </div>
+
+
 </body>
 
 </html>
